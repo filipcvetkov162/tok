@@ -67,6 +67,7 @@
         <select id="tariff" required>
             <option value="single">Една тарифа</option>
             <option value="double">Втора тарифа</option>
+            <option value="both">И двете</option>
         </select>
         <div id="single-tariff" style="display: block;">
             <label for="kWh1">Консумирана енергия (kWh):</label>
@@ -84,6 +85,9 @@
             <label for="price3">Цена на kWh за втора тарифа:</label>
             <input type="number" id="price3" placeholder="Въведете цена на kWh за втора тарифа">
         </div>
+        <label>
+            <input type="checkbox" id="includeVAT"> Включване на 20% ДДС
+        </label>
         <button onclick="calculateBill()">Изчисли</button>
         <button onclick="showModal()">За калкулатора</button>
         <h3 id="result"></h3>
@@ -93,7 +97,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>Как да използвате калкулатора</h2>
-            <p>За да използвате калкулатора, изберете тарифа, въведете количеството консумирана енергия в киловатчасове (kWh) и цената на киловатчас (kWh). След това натиснете бутона 'Изчисли', за да получите общата сума на сметката с включен 20% ДДС.</p>
+            <p>За да използвате калкулатора, изберете тарифа, въведете количеството консумирана енергия в киловатчасове (kWh) и цената на киловатчас (kWh). След това натиснете бутона 'Изчисли', за да получите общата сума на сметката. Ако искате да включите 20% ДДС, отбележете съответното поле.</p>
         </div>
     </div>
 
@@ -106,6 +110,7 @@
 
         function calculateBill() {
             const tariff = document.getElementById('tariff').value;
+            const includeVAT = document.getElementById('includeVAT').checked;
             let totalBill = 0;
 
             if (tariff === 'single') {
@@ -128,8 +133,11 @@
                 totalBill = (kWh2 * price2) + (kWh3 * price3);
             }
 
-            const totalWithVAT = totalBill * 1.20; // Добавяне на 20% ДДС
-            document.getElementById('result').innerText = `Обща сума на сметката: ${totalBill.toFixed(2)} лв.\nКрайна сума с ДДС: ${totalWithVAT.toFixed(2)} лв.`;
+            if (includeVAT) {
+                totalBill *= 1.20; // Добавяне на 20% ДДС
+            }
+
+            document.getElementById('result').innerText = `Обща сума на сметката: ${totalBill.toFixed(2)} лв.`;
         }
 
         function showModal() {
