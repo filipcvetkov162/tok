@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калкулатор за Сметка за Ток</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .calculator input, .calculator select, .calculator button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 8px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>Калкулатор за Сметка за Ток</h2>
+        <label for="tariff">Изберете тарифа:</label>
+        <select id="tariff" required>
+            <option value="single">Една тарифа</option>
+            <option value="double">Втора тарифа</option>
+            <option value="both">И двете</option>
+        </select>
+        <div id="single-tariff" style="display: block;">
+            <label for="kWh1">Консумирана енергия (kWh):</label>
+            <input type="number" id="kWh1" placeholder="Въведете kWh" required>
+            <label for="price1">Цена на kWh:</label>
+            <input type="number" id="price1" placeholder="Въведете цена на kWh" required>
+        </div>
+        <div id="double-tariff" style="display: none;">
+            <label for="kWh2">Консумирана енергия за първа тарифа (kWh):</label>
+            <input type="number" id="kWh2" placeholder="Въведете kWh за първа тарифа">
+            <label for="price2">Цена на kWh за първа тарифа:</label>
+            <input type="number" id="price2" placeholder="Въведете цена на kWh за първа тарифа">
+            <label for="kWh3">Консумирана енергия за втора тарифа (kWh):</label>
+            <input type="number" id="kWh3" placeholder="Въведете kWh за втора тарифа">
+            <label for="price3">Цена на kWh за втора тарифа:</label>
+            <input type="number" id="price3" placeholder="Въведете цена на kWh за втора тарифа">
+        </div>
+        <button onclick="calculateBill()">Изчисли</button>
+        <button onclick="showModal()">За калкулатора</button>
+        <h3 id="result"></h3>
+    </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Как да използвате калкулатора</h2>
+            <p>За да използвате калкулатора, изберете тарифа, въведете количеството консумирана енергия в киловатчасове (kWh) и цената на киловатчас (kWh). След това натиснете бутона 'Изчисли', за да получите общата сума на сметката с включен 20% ДДС.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('tariff').addEventListener('change', function() {
+            const selectedTariff = this.value;
+            document.getElementById('single-tariff').style.display = selectedTariff === 'single' ? 'block' : 'none';
+            document.getElementById('double-tariff').style.display = selectedTariff === 'double' || selectedTariff === 'both' ? 'block' : 'none';
+        });
+
+        function calculateBill() {
+            const tariff = document.getElementById('tariff').value;
+            let totalBill = 0;
+
+            if (tariff === 'single') {
+                const kWh1 = parseFloat(document.getElementById('kWh1').value);
+                const price1 = parseFloat(document.getElementById('price1').value);
+                if (isNaN(kWh1) || isNaN(price1)) {
+                    document.getElementById('result').innerText = 'Моля, въведете валидни стойности.';
+                    return;
+                }
+                totalBill = kWh1 * price1;
+            } else if (tariff === 'double' || tariff === 'both') {
+                const kWh2 = parseFloat(document.getElementById('kWh2').value);
+                const price2 = parseFloat(document.getElementById('price2').value);
+                const kWh3 = parseFloat(document.getElementById('kWh3').value);
+                const price3 = parseFloat(document.getElementById('price3').value);
+                if (isNaN(kWh2) || isNaN(price2) || isNaN(kWh3) || isNaN(price3)) {
+                    document.getElementById('result').innerText = 'Моля, въведете валидни стойности.';
+                    return;
+                }
+                totalBill = (kWh2 * price2) + (kWh3 * price3);
+            }
+
+            const totalWithVAT = totalBill * 1.20; // Добавяне на 20% ДДС
+            document.getElementById('result').innerText = `Обща сума на сметката: ${totalBill.toFixed(2)} лв.\nКрайна сума с ДДС: ${totalWithVAT.toFixed(2)} лв.`;
+        }
+
+        function showModal() {
+            document.getElementById('infoModal').style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById('infoModal').style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('infoModal');
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
