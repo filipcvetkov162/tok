@@ -25,6 +25,15 @@
             padding: 10px;
             margin: 10px 0;
         }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .checkbox-container input {
+            width: auto;
+            margin-right: 10px;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -85,9 +94,10 @@
             <label for="price3">Цена на kWh за втора тарифа:</label>
             <input type="number" id="price3" placeholder="Въведете цена на kWh за втора тарифа">
         </div>
-        <label>
-            <input type="checkbox" id="includeVAT"> Включване на 20% ДДС
-        </label>
+        <div class="checkbox-container">
+            <input type="checkbox" id="includeVAT">
+            <label for="includeVAT">Включване на 20% ДДС</label>
+        </div>
         <button onclick="calculateBill()">Изчисли</button>
         <button onclick="showModal()">За калкулатора</button>
         <h3 id="result"></h3>
